@@ -1,5 +1,8 @@
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
+
+import javax.annotation.processing.SupportedAnnotationTypes;
 
 
 
@@ -18,117 +21,118 @@ import java.util.Map;
 3. 进阶：是否可以在 O(1) 时间复杂度内完成这两种操作？
 */
 
-public class LRUCache {
 
-    int capacity;
-    HashMap<Integer, LinkEntry> map;
-    LinkEntry head;
-    LinkEntry tail;
+class LRUCache extends LinkedHashMap<Integer, Integer> {
 
-
-    public static void main(String[] args){
-        LRUCache cache = new LRUCache( 2 /* 缓存容量 */ );
-
-        cache.put(1, 1);
-        cache.put(2, 2);
-        System.out.println(cache.get(1));        // 返回  1
-        cache.put(3, 3);    // 该操作会使得关键字 2 作废
-        System.out.println(cache.get(2));       // 返回 -1 (未找到)
-        cache.put(4, 4);    // 该操作会使得关键字 1 作废
-        System.out.println(cache.get(1));       // 返回 -1 (未找到)
-        System.out.println(cache.get(3));       // 返回  3
-        System.out.println(cache.get(4));       // 返回  4
-    }
+    int capacity ;
 
     public LRUCache(int capacity) {
+        super(capacity, 0.75f, true);
         this.capacity = capacity;
-        map = new HashMap<Integer, LinkEntry>(capacity, 0.75f);
-
-        head = new LinkEntry(0, 0);
-        tail = new LinkEntry(0, 0);
-
-        head.prev = tail;
-        head.next = tail;
-
-        tail.prev = head;
-        tail.next = head;
     }
 
-    public void put(int key, int value){
-
-        LinkEntry entry = null;
-
-        if(map.containsKey(key)) {
-            entry = map.get(key);
-            entry.value = value;
-            moveToTail(entry);
-        } else {
-            entry = new LinkEntry(key, value);
-            if(shouldRemoveEldest()) {
-                removeEntry(head.next);
-            }
-            addToTail(entry);
-        }
+    public void put(int key, int value) {
+        super.put(key, value);
     }
 
     public int get(int key) {
-        int result = -1;
-        if (map.containsKey(key)){
-            LinkEntry entry = map.get(key);
-            result = entry.value;
-            moveToTail(entry);
-        }
-        return result;
+        return super.getOrDefault(key, -1);
     }
 
-    private void addToTail(LRUCache.LinkEntry entry) {
-        LinkEntry oldTail = tail.prev;
-
-        oldTail.next = entry;
-        entry.prev = oldTail;
-
-        tail.prev = entry;
-        entry.next = tail;
-
-        map.put(entry.key, entry);
-    }
-
-    private void removeEntry(LRUCache.LinkEntry entry) {
-        entry.prev.next = entry.next;
-        entry.next.prev = entry.prev;
-
-        map.remove(entry.key);
-    }
-
-    private boolean shouldRemoveEldest() {
-        return map.size() >= capacity;
-    }
-
-    private void moveToTail(LRUCache.LinkEntry entry) {
-        entry.prev.next = entry.next;
-        entry.next.prev = entry.prev;
-
-        LinkEntry oldTail = tail.prev;
-        oldTail.next = entry;
-        entry.prev = oldTail;
-
-        entry.next = tail;
-        tail.prev = entry;
-
-    }
-
-    class LinkEntry {
-
-        int key;
-        int value;
-        LinkEntry prev;
-        LinkEntry next;
-
-        public LinkEntry(int i, int j) {
-            this.key = i;
-            this.value = j;
-        }
-    }
-
+    @Override
+    protected boolean removeEldestEntry(Map.Entry entry) {
+        return this.size() > capacity;
+    } 
 }
+
+// public class LRUCache {
+//     int capacity;
+//     HashMap<Integer, LinkNode> map = null;
+//     LinkNode head;
+//     LinkNode tail;
+
+//     public LRUCache(int capacity) {
+//         this.capacity = capacity;
+//         map = new HashMap(capacity, 0.75f);
+
+//         head = new LinkNode(0, 0);
+//         tail = new LinkNode(0, 0);
+
+//         head.next = tail;
+//         head.prev = tail;
+
+//         tail.next = head;
+//         tail.prev = head;
+//     }
+
+//     public void put(int key, int value){
+//         LinkNode node = null;
+//         if (map.containsKey(key)) {
+//             node = map.get(key);
+//             node.value = value;
+//             moveToTail(node);
+//         } else {
+//             if (map.size() >= capacity) {
+//                 removeEldestNode();
+//             }
+//             node = new LinkNode(key, value);
+//             map.put(key, node);
+//             addToTail(node);
+//         }
+//     }
+
+//     public int get(int key) {
+//         int result = -1;
+
+//         if(map.containsKey(key)) {
+//             LinkNode node = map.get(key);
+//             result = node.value;
+//             moveToTail(node);
+//         }
+//         return result;
+//     }
+
+//     private void addToTail(LRUCache.LinkNode node) {
+//         LinkNode oldTail = tail.prev;
+//         oldTail.next = node;
+//         node.prev = oldTail;
+
+//         node.next = tail;
+//         tail.prev = node;
+//     }
+
+//     private void removeEldestNode() {
+//         LinkNode eldest = head.next;
+
+//         eldest.prev.next = eldest.next;
+//         eldest.next.prev = eldest.prev;
+
+//         map.remove(eldest.key);
+//     }
+
+//     private void moveToTail(LRUCache.LinkNode node) {
+//         node.prev.next = node.next;
+//         node.next.prev = node.prev;
+
+//         tail.prev.next = node;
+//         node.prev = tail.prev;
+
+//         node.next = tail;
+//         tail.prev = node;
+//     }
+
+//     class LinkNode {
+//         int key;
+//         int value;
+//         LinkNode prev;
+//         LinkNode next;
+
+//         LinkNode(int key, int value) {
+//             this.key = key;
+//             this.value =  value;
+//         }
+//     }
+
+// }
 // @lc code=end
+

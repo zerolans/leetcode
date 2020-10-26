@@ -9,18 +9,8 @@ import jdk.javadoc.internal.tool.Main;
 // @lc code=start
 class Solution {
     public int maxArea(int[] height) {
-        // int i=0, j=height.length-1;
         int ans = 0;
-        // while(i<j) {
-        //     int area = Math.min(height[i], height[j])*(j - i);
-        //     ans = Math.max(area, ans);
-        //     if(height[i] <= height[j]) {
-        //         ++i;
-        //     } else {
-        //         --j;
-        //     }
-        // }
-        ans = maxArea2(height);
+        ans = maxArea4(height);
         
         return ans;
     }
@@ -39,6 +29,41 @@ class Solution {
 
         return ans;
     }
+
+    public static int maxArea3(int[] height) {
+        int ans = 0;
+
+        int l = 0, r = height.length - 1;
+
+        while(l < r) {
+            int area = Math.min(height[l], height[r]) * (r - l);
+
+            ans = Math.max(ans, area);
+
+            if (height[l] <= height[r]){
+                ++l;
+            } else {
+                --r;
+            }
+
+        }
+        return ans;
+    }
+
+    public int maxArea4(int[] height) {
+        int areas = 0;
+        int i=0, j=height.length-1;
+
+        while(i < j) {
+            int a = (j-i) * ((height[i] < height[j])?
+                    Math.min(height[i++], height[j]):
+                    Math.min(height[i], height[j--]));
+
+            areas = Math.max(a, areas);
+        }
+        return areas;
+    }
+
 }
 // @lc code=end
 
