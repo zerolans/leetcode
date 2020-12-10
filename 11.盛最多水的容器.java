@@ -1,4 +1,5 @@
 import jdk.javadoc.internal.tool.Main;
+import jdk.nashorn.internal.ir.WhileNode;
 
 /*
  * @lc app=leetcode.cn id=11 lang=java
@@ -52,15 +53,21 @@ class Solution {
 
     public int maxArea4(int[] height) {
         int areas = 0;
-        int i=0, j=height.length-1;
+        int i = 0;
+        int j = height.length - 1;
 
         while(i < j) {
-            int a = (j-i) * ((height[i] < height[j])?
-                    Math.min(height[i++], height[j]):
-                    Math.min(height[i], height[j--]));
-
+            int a = Math.min(height[i], height[j]) * (j - i);
             areas = Math.max(a, areas);
+
+            if(height[i] < height[j]){
+                ++i;
+            } else {
+                --j;
+            }
+            
         }
+
         return areas;
     }
 

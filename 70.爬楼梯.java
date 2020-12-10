@@ -7,7 +7,7 @@
 // @lc code=start
 class Solution {
     public int climbStairs(int n) {
-        return climbStairs5(n);
+        return climbStairs6(n);
     }
 
     public int climbStairs1 (int n) {
@@ -65,11 +65,11 @@ class Solution {
     //动态规划
     public int climbStairs4(int n) {
         int result = 1;
-        int q=0, p=0;
+        int q = 0, p = 0;
         for(int i=0; i<n; i++) {
             q = p;
             p = result;
-            result = q + p; 
+            result = q + p;
         }
         return result;
     }
@@ -82,28 +82,34 @@ class Solution {
     }
 
     private int[][] pow1(int[][] res, int n) {
-        int a[][] = {{1, 0}, {0, 1}};
-
-        while(n > 0) {
-            if((n&1) == 1){
-                a = multiply1(a, res);
+        int[][] result = {{1, 0}, {0, 1}};
+        while(n>0) {
+            if((n&1) == 1) {
+                result = multiply1(result, res);
             }
-
-            res = multiply(res, res);
+            res = multiply1(res, res);
             n >>= 1;
         }
-
-        return a;
+        return result;
     }
 
     private int[][] multiply1(int[][] a, int[][] b) {
         int[][] result = new int[2][2];
-        for(int i = 0; i<2; i++) {
+
+        for(int i=0; i<2; i++) {
             for(int j=0; j<2; j++) {
                 result[i][j] = a[i][0] * b[0][j] + a[i][1] * b[1][j];
             }
         }
+
         return result;
+    }
+    
+    //多项式
+    public int climbStairs6(int n) {
+        double sqrt5 = Math.sqrt(5);
+        double r = Math.pow((1 + sqrt5)/2, n+1) - Math.pow((1 - sqrt5)/2, n+1);
+        return (int)(r/sqrt5);
     }
 
 }
