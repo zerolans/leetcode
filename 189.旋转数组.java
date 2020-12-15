@@ -7,7 +7,7 @@
 // @lc code=start
 class Solution {
     public void rotate(int[] nums, int k) {
-        
+        rotate1(nums, k);
     }
 
     //方法一、暴力旋转
@@ -27,7 +27,7 @@ class Solution {
     public void rotate2(int[] nums, int k){
         int[] nums1 = new int[nums.length];
         for(int i=0; i<nums.length; i++){
-            nums1[(i+k)%nume.length] = nums[i];
+            nums1[(i+k)%nums.length] = nums[i];
         }
 
         for(int i=0; i<nums.length; i++){
@@ -50,7 +50,7 @@ class Solution {
                 nums[next] = temp;
                 current = next;
                 count ++;
-            } while (current != i)
+            } while (current != i);
         }
     }
 
